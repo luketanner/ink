@@ -3,12 +3,11 @@ import React, {type ReactNode} from 'react';
 import throttle from 'lodash/throttle.js';
 import {type DebouncedFunc} from 'lodash';
 import ansiEscapes from 'ansi-escapes';
-import originalIsCi from 'is-ci';
+import isInCi from 'is-in-ci';
 import autoBind from 'auto-bind';
 import signalExit from 'signal-exit';
 import patchConsole from 'patch-console';
 import {type FiberRoot} from 'react-reconciler';
-// eslint-disable-next-line n/file-extension-in-import
 import Yoga from 'yoga-wasm-web/auto';
 import reconciler from './reconciler.js';
 import render from './renderer.js';
@@ -17,7 +16,6 @@ import logUpdate, {type LogUpdate} from './log-update.js';
 import instances from './instances.js';
 import App from './components/App.js';
 
-const isCi = process.env['CI'] === 'false' ? false : originalIsCi;
 const noop = () => {};
 
 export type Options = {
@@ -57,8 +55,8 @@ export default class Ink {
 			? this.onRender
 			: throttle(this.onRender, 32, {
 					leading: true,
-					trailing: true
-			  });
+					trailing: true,
+				});
 
 		this.rootNode.onImmediateRender = this.onRender;
 		this.log = logUpdate.create(options.stdout);
@@ -66,8 +64,8 @@ export default class Ink {
 			? this.log
 			: throttle(this.log, undefined, {
 					leading: true,
-					trailing: true
-			  });
+					trailing: true,
+				});
 
 		// Ignore last render after unmounting a tree to prevent empty output before exit
 		this.isUnmounted = false;
@@ -89,7 +87,7 @@ export default class Ink {
 			null,
 			'id',
 			() => {},
-			null
+			null,
 		);
 
 		// Unmount when process exits
@@ -101,7 +99,7 @@ export default class Ink {
 				// Reporting React DOM's version, not Ink's
 				// See https://github.com/facebook/react/issues/16666#issuecomment-532639905
 				version: '16.13.1',
-				rendererPackageName: 'ink'
+				rendererPackageName: 'ink',
 			});
 		}
 
@@ -109,7 +107,7 @@ export default class Ink {
 			this.patchConsole();
 		}
 
-		if (!isCi) {
+		if (!isInCi) {
 			options.stdout.on('resize', this.resized);
 
 			this.unsubscribeResize = () => {
@@ -137,7 +135,7 @@ export default class Ink {
 		this.rootNode.yogaNode!.calculateLayout(
 			undefined,
 			undefined,
-			Yoga.DIRECTION_LTR
+			Yoga.DIRECTION_LTR,
 		);
 	};
 
@@ -160,7 +158,7 @@ export default class Ink {
 			return;
 		}
 
-		if (isCi) {
+		if (isInCi) {
 			if (hasStaticOutput) {
 				this.options.stdout.write(staticOutput);
 			}
@@ -225,7 +223,7 @@ export default class Ink {
 			return;
 		}
 
-		if (isCi) {
+		if (isInCi) {
 			this.options.stdout.write(data);
 			return;
 		}
@@ -246,7 +244,7 @@ export default class Ink {
 			return;
 		}
 
-		if (isCi) {
+		if (isInCi) {
 			this.options.stderr.write(data);
 			return;
 		}
@@ -276,7 +274,7 @@ export default class Ink {
 
 		// CIs don't handle erasing ansi escapes well, so it's better to
 		// only render last frame of non-static output
-		if (isCi) {
+		if (isInCi) {
 			this.options.stdout.write(this.lastOutput + '\n');
 		} else if (!this.options.debug) {
 			this.log.done();
@@ -306,7 +304,7 @@ export default class Ink {
 	}
 
 	clear(): void {
-		if (!isCi && !this.options.debug) {
+		if (!isInCi && !this.options.debug) {
 			this.log.clear();
 		}
 	}

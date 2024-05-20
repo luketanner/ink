@@ -1,14 +1,9 @@
 import process from 'node:process';
-import {createRequire} from 'node:module';
 import url from 'node:url';
-import * as path from 'node:path';
+import path from 'node:path';
 import test, {type ExecutionContext} from 'ava';
 import stripAnsi from 'strip-ansi';
-
-const require = createRequire(import.meta.url);
-
-// eslint-disable-next-line @typescript-eslint/consistent-type-imports
-const {spawn} = require('node-pty') as typeof import('node-pty');
+import {spawn} from 'node-pty';
 
 const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
 
@@ -26,7 +21,7 @@ const term = (fixture: string, args: string[] = []) => {
 		// eslint-disable-next-line @typescript-eslint/naming-convention
 		NODE_NO_WARNINGS: '1',
 		// eslint-disable-next-line @typescript-eslint/naming-convention
-		CI: 'false'
+		CI: 'false',
 	};
 
 	const ps = spawn(
@@ -34,14 +29,14 @@ const term = (fixture: string, args: string[] = []) => {
 		[
 			'--loader=ts-node/esm',
 			path.join(__dirname, `./fixtures/${fixture}.tsx`),
-			...args
+			...args,
 		],
 		{
 			name: 'xterm-color',
 			cols: 100,
 			cwd: __dirname,
-			env
-		}
+			env,
+		},
 	);
 
 	const result = {
@@ -53,20 +48,20 @@ const term = (fixture: string, args: string[] = []) => {
 			}, 3000);
 		},
 		output: '',
-		waitForExit: async () => exitPromise
+		waitForExit: async () => exitPromise,
 	};
 
-	ps.on('data', (data: string) => {
+	ps.onData(data => {
 		result.output += data;
 	});
 
-	ps.on('exit', (code: number) => {
-		if (code === 0) {
+	ps.onExit(({exitCode}) => {
+		if (exitCode === 0) {
 			resolve();
 			return;
 		}
 
-		reject(new Error(`Process exited with non-zero exit code: ${code}`));
+		reject(new Error(`Process exited with non-zero exit code: ${exitCode}`));
 	});
 
 	return result;
@@ -280,7 +275,7 @@ test.serial(
 
 		const thirdTry = await t.try(run);
 		thirdTry.commit();
-	}
+	},
 );
 
 test.serial('useStdout - write to stdout', async t => {
@@ -292,7 +287,7 @@ test.serial('useStdout - write to stdout', async t => {
 	t.deepEqual(lines.slice(1, -1), [
 		'Hello from Ink to stdout',
 		'Hello World',
-		'exited'
+		'exited',
 	]);
 });
 

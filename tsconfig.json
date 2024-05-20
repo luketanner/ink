@@ -1,11 +1,15 @@
 {
 	"extends": "@sindresorhus/tsconfig",
 	"compilerOptions": {
-		"moduleResolution": "node16",
-		"module": "node16",
 		"outDir": "build",
+		"lib": [
+			"DOM",
+			"DOM.Iterable",
+			"ES2023"
+		],
 		"sourceMap": true,
-		"jsx": "react"
+		"jsx": "react",
+		"isolatedModules": true
 	},
 	"include": ["src"],
 	"ts-node": {

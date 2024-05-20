@@ -1,4 +1,3 @@
-// eslint-disable-next-line n/file-extension-in-import
 import Yoga, {type Node as YogaNode} from 'yoga-wasm-web/auto';
 import measureText from './measure-text.js';
 import {type Styles} from './styles.js';
@@ -61,7 +60,7 @@ export const createNode = (nodeName: ElementNames): DOMElement => {
 		attributes: {},
 		childNodes: [],
 		parentNode: undefined,
-		yogaNode: nodeName === 'ink-virtual-text' ? undefined : Yoga.Node.create()
+		yogaNode: nodeName === 'ink-virtual-text' ? undefined : Yoga.Node.create(),
 	};
 
 	if (nodeName === 'ink-text') {
@@ -73,7 +72,7 @@ export const createNode = (nodeName: ElementNames): DOMElement => {
 
 export const appendChildNode = (
 	node: DOMElement,
-	childNode: DOMElement
+	childNode: DOMElement,
 ): void => {
 	if (childNode.parentNode) {
 		removeChildNode(childNode.parentNode, childNode);
@@ -85,7 +84,7 @@ export const appendChildNode = (
 	if (childNode.yogaNode) {
 		node.yogaNode?.insertChild(
 			childNode.yogaNode,
-			node.yogaNode.getChildCount()
+			node.yogaNode.getChildCount(),
 		);
 	}
 
@@ -97,7 +96,7 @@ export const appendChildNode = (
 export const insertBeforeNode = (
 	node: DOMElement,
 	newChildNode: DOMNode,
-	beforeChildNode: DOMNode
+	beforeChildNode: DOMNode,
 ): void => {
 	if (newChildNode.parentNode) {
 		removeChildNode(newChildNode.parentNode, newChildNode);
@@ -120,7 +119,7 @@ export const insertBeforeNode = (
 	if (newChildNode.yogaNode) {
 		node.yogaNode?.insertChild(
 			newChildNode.yogaNode,
-			node.yogaNode.getChildCount()
+			node.yogaNode.getChildCount(),
 		);
 	}
 
@@ -131,7 +130,7 @@ export const insertBeforeNode = (
 
 export const removeChildNode = (
 	node: DOMElement,
-	removeNode: DOMNode
+	removeNode: DOMNode,
 ): void => {
 	if (removeNode.yogaNode) {
 		removeNode.parentNode?.yogaNode?.removeChild(removeNode.yogaNode);
@@ -152,7 +151,7 @@ export const removeChildNode = (
 export const setAttribute = (
 	node: DOMElement,
 	key: string,
-	value: DOMNodeAttribute
+	value: DOMNodeAttribute,
 ): void => {
 	node.attributes[key] = value;
 };
@@ -167,7 +166,7 @@ export const createTextNode = (text: string): TextNode => {
 		nodeValue: text,
 		yogaNode: undefined,
 		parentNode: undefined,
-		style: {}
+		style: {},
 	};
 
 	setTextNodeValue(node, text);
@@ -177,7 +176,7 @@ export const createTextNode = (text: string): TextNode => {
 
 const measureTextNode = function (
 	node: DOMNode,
-	width: number
+	width: number,
 ): {width: number; height: number} {
 	const text =
 		node.nodeName === '#text' ? node.nodeValue : squashTextNodes(node);

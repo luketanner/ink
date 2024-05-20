@@ -5,7 +5,7 @@ import {
 	Text,
 	useFocus,
 	useInput,
-	useFocusManager
+	useFocusManager,
 } from '../../src/index.js';
 
 function Focus() {
@@ -41,8 +41,8 @@ function Focus() {
 }
 
 type ItemProps = {
-	id: number;
-	label: string;
+	readonly id: number;
+	readonly label: string;
 };
 
 function Item({label, id}: ItemProps) {

@@ -1,7 +1,6 @@
 import process from 'node:process';
 import createReconciler from 'react-reconciler';
 import {DefaultEventPriority} from 'react-reconciler/constants.js';
-// eslint-disable-next-line n/file-extension-in-import
 import Yoga, {type Node as YogaNode} from 'yoga-wasm-web/auto';
 import {
 	createTextNode,
@@ -15,7 +14,7 @@ import {
 	type DOMNodeAttribute,
 	type TextNode,
 	type ElementNames,
-	type DOMElement
+	type DOMElement,
 } from './dom.js';
 import applyStyles, {type Styles} from './styles.js';
 import {type OutputTransformer} from './render-node-to-output.js';
@@ -27,13 +26,16 @@ if (process.env['DEV'] === 'true') {
 	try {
 		await import('./devtools.js');
 	} catch (error: any) {
-		if (error.code === 'MODULE_NOT_FOUND') {
+		if (error.code === 'ERR_MODULE_NOT_FOUND') {
 			console.warn(
 				`
-Debugging with React Devtools requires \`react-devtools-core\` dependency to be installed.
+The environment variable DEV is set to true, so Ink tried to import \`react-devtools-core\`,
+but this failed as it was not installed. Debugging with React Devtools requires it.
+
+To install use this command:
 
 $ npm install --save-dev react-devtools-core
-				`.trim() + '\n'
+				`.trim() + '\n',
 			);
 		} else {
 			// eslint-disable-next-line @typescript-eslint/no-throw-literal
@@ -109,7 +111,7 @@ export default createReconciler<
 	unknown
 >({
 	getRootHostContext: () => ({
-		isInsideText: false
+		isInsideText: false,
 	}),
 	prepareForCommit: () => null,
 	preparePortalMount: () => null,
@@ -191,7 +193,7 @@ export default createReconciler<
 	createTextInstance(text, _root, hostContext) {
 		if (!hostContext.isInsideText) {
 			throw new Error(
-				`Text string "${text}" must be rendered inside <Text> component`
+				`Text string "${text}" must be rendered inside <Text> component`,
 			);
 		}
 
@@ -254,7 +256,7 @@ export default createReconciler<
 
 		const style = diff(
 			oldProps['style'] as Styles,
-			newProps['style'] as Styles
+			newProps['style'] as Styles,
 		);
 
 		if (!props && !style) {
@@ -295,5 +297,5 @@ export default createReconciler<
 	removeChild(node, removeNode) {
 		removeChildNode(node, removeNode);
 		cleanupYogaNode(removeNode.yogaNode);
-	}
+	},
 });

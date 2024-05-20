@@ -1,8 +1,7 @@
 /* eslint-disable @typescript-eslint/prefer-nullish-coalescing */
 import {type Boxes, type BoxStyle} from 'cli-boxes';
 import {type LiteralUnion} from 'type-fest';
-import {type ForegroundColorName} from 'chalk';
-// eslint-disable-next-line n/file-extension-in-import
+import {type ForegroundColorName} from 'ansi-styles'; // Note: We import directly from `ansi-styles` to avoid a bug in TypeScript.
 import Yoga, {type Node as YogaNode} from 'yoga-wasm-web/auto';
 
 export type Styles = {
@@ -309,7 +308,7 @@ const applyPositionStyles = (node: YogaNode, style: Styles): void => {
 		node.setPositionType(
 			style.position === 'absolute'
 				? Yoga.POSITION_TYPE_ABSOLUTE
-				: Yoga.POSITION_TYPE_RELATIVE
+				: Yoga.POSITION_TYPE_RELATIVE,
 		);
 	}
 };
@@ -381,7 +380,7 @@ const applyFlexStyles = (node: YogaNode, style: Styles): void => {
 
 	if ('flexShrink' in style) {
 		node.setFlexShrink(
-			typeof style.flexShrink === 'number' ? style.flexShrink : 1
+			typeof style.flexShrink === 'number' ? style.flexShrink : 1,
 		);
 	}
 
@@ -528,7 +527,7 @@ const applyDimensionStyles = (node: YogaNode, style: Styles): void => {
 const applyDisplayStyles = (node: YogaNode, style: Styles): void => {
 	if ('display' in style) {
 		node.setDisplay(
-			style.display === 'flex' ? Yoga.DISPLAY_FLEX : Yoga.DISPLAY_NONE
+			style.display === 'flex' ? Yoga.DISPLAY_FLEX : Yoga.DISPLAY_NONE,
 		);
 	}
 };
