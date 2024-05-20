@@ -19,7 +19,7 @@ const create = (stream: Writable, {showCursor = false} = {}): LogUpdate => {
 			hasHiddenCursor = true;
 		}
 
-		const output = str + '\n';
+		const output = str;
 		if (output === previousOutput) {
 			return;
 		}
