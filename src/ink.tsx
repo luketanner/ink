@@ -174,9 +174,11 @@ export default class Ink {
 		}
 
 		if (outputHeight >= this.options.stdout.rows) {
-			this.options.stdout.write(
-				ansiEscapes.clearTerminal + this.fullStaticOutput + output
-			);
+			this.options.stdout.write(ansiEscapes.cursorTo(0, 0));
+			(this.fullStaticOutput + output).split('\n').forEach((line, index) => {
+				if (index > 0) this.options.stdout.write('\n');
+				this.options.stdout.write(ansiEscapes.eraseLine + line);
+			});
 			this.lastOutput = output;
 			return;
 		}
